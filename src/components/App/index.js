@@ -37,22 +37,36 @@ export default function App() {
     setHands(newHands);
   };
 
-  const playCard = card => {
-    setTurn(turn + (1 % players.length));
-
-    // add card to board - check if it matches other cards already on te board?
+  const removeCardFromHand = (hand, card) => {
+    const newHand = hand;
+    const cardIndex = newHand.findIndex(c => c === card);
+    newHand[cardIndex] = null;
+    console.log('newhand', newHand);
+    console.log(hands[turn], cardIndex);
   };
 
-  console.log('deck', deck);
+  const removeCardsFromBoard = card => {
+    const value = 0;
+  };
+
+  const playCard = (hand, card) => {
+    setBoardCards([...boardCards, card]);
+    removeCardFromHand(hand, card);
+    removeCardsFromBoard(card);
+    // add card to board - check if it matches other cards already on te board?
+    setTurn((turn + 1) % players);
+  };
+
+  // console.log('deck', deck);
 
   return (
     <AppContainer>
       <GlobalStyles />
-      {players === null && <button onClick={() => setPlayers(2)}>2</button>}
+      {players === null && <button onClick={() => setPlayers(1)}>2</button>}
       {/* {players && <button onClick={() => dealToPlayers()}>deal</button>}
       {players && <button onClick={() => dealToBoard()}>deal to board</button>} */}
       {hands.map(hand => {
-        return <Player cards={hand} />;
+        return <Player hand={hand} playCard={playCard} />;
       })}
       <br />
       <br />

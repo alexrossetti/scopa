@@ -1,15 +1,4 @@
-const primieraScoring = {
-  7: 21,
-  6: 18,
-  1: 16,
-  5: 15,
-  4: 14,
-  3: 13,
-  2: 12,
-  Fante: 10,
-  Cavallo: 10,
-  Re: 10,
-};
+import { primieraScoring } from '../constants/cards';
 
 export const scorePrimiera = decks => {
   const primiera = decks.map(deck => {

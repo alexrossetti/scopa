@@ -1,5 +1,4 @@
-const suits = ['Spade', 'Denari', 'Coppe', 'Bastoni'];
-const cards = [1, 2, 3, 4, 5, 6, 7, 'Fante', 'Cavallo', 'Re'];
+import { suits, cards } from '../constants/cards';
 
 export const setupDeck = () => {
   let deck = [];
