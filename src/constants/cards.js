@@ -13,3 +13,16 @@ export const primieraScoring = {
   Cavallo: 10,
   Re: 10,
 };
+
+export const cardValues = {
+  1: 1,
+  2: 2,
+  3: 3,
+  4: 4,
+  5: 5,
+  6: 6,
+  7: 7,
+  Fante: 8,
+  Cavallo: 9,
+  Re: 10,
+};
