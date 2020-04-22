@@ -1,25 +1,33 @@
 import { cardValues } from '../constants/cards';
 
+// return array/set of all possible sums of cards (and the way you create those sums?)
 export const getAllPossibleSums = boardCards => {
   const points = boardCards.map(card => cardValues[card.split(' ')[0]]);
-  // return array/set of all possible sums of cards (and the way you create those sums?)
 
-  let combinations = Math.pow(2, points.length);
-  let comb = [];
+  const sums = [];
   let temp = 0;
+  let tempCards = [];
 
-  for (let i = 0; i < combinations; i++) {
+  for (let i = 0; i < Math.pow(2, points.length); i++) {
     temp = 0;
+    tempCards = [];
 
     for (let j = 0; j < points.length; j++) {
       if (i & Math.pow(2, j)) {
         temp += points[j];
+        tempCards.push(boardCards[j]);
       }
     }
     if (temp !== 0 && temp <= 10) {
-      comb.push(temp);
+      sums.push(temp);
     }
   }
 
-  return [...new Set(comb.sort((a, b) => a - b))];
+  return sums.sort((a, b) => a - b);
+};
+
+export const sumOfCardValues = array => {
+  return array.reduce((total, card) => {
+    return (total += cardValues[card.split(' ')[0]]);
+  }, 0);
 };
