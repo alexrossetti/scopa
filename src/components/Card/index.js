@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export default function Card({ card, cardToPlay, setCardToPlay }) {
   if (!card) {
-    return <div> -- </div>;
+    return <Wrapper isSelected={false}> -- </Wrapper>;
   }
 
   const [value, suit] = [card.split(' ')[0], card.split(' ')[1]];

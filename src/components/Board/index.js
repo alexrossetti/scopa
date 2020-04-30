@@ -29,7 +29,7 @@ export default function Board({
     }
   };
 
-  console.log('sum of selection', selectedSum);
+  // console.log('sum of selection', selectedSum);
 
   return (
     <Wrapper>
