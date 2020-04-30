@@ -36,6 +36,7 @@ export default function Board({
       {boardCards.map(card => {
         return (
           <Card
+            key={card}
             isSelected={cardsToTake.includes(card)}
             onClick={() => onClick(card)}
           >

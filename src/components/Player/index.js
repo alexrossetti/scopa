@@ -15,6 +15,7 @@ export default function Player({
       {hand.map(card => {
         return (
           <Card
+            key={card}
             card={card}
             cardToPlay={cardToPlay}
             setCardToPlay={setCardToPlay}
