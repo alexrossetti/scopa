@@ -1,6 +1,7 @@
 import React from 'react';
-import Card from '../Card';
 import styled from 'styled-components';
+
+import Card from '../Card';
 
 export default function Player({
   isTurn,
@@ -10,6 +11,14 @@ export default function Player({
   cardToPlay,
   setCardToPlay,
 }) {
+  const toggleCardToPlay = card => {
+    if (cardToPlay === card) {
+      setCardToPlay(null);
+    } else {
+      setCardToPlay(card);
+    }
+  };
+
   return (
     <Wrapper isTurn={isTurn}>
       {hand &&
@@ -17,9 +26,9 @@ export default function Player({
           return (
             <Card
               key={index}
+              isSelected={card === cardToPlay}
               card={card}
-              cardToPlay={cardToPlay}
-              setCardToPlay={setCardToPlay}
+              onCardClick={toggleCardToPlay}
             />
           );
         })}

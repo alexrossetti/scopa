@@ -1,29 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export default function Card({ card, cardToPlay, setCardToPlay }) {
+export default function Card({ isSelected, card, onCardClick }) {
   if (!card) {
     return <Wrapper isSelected={false}> -- </Wrapper>;
   }
 
   const [value, suit] = [card.split(' ')[0], card.split(' ')[1]];
 
-  const toggleCardToPlay = () => {
-    if (cardToPlay === card) {
-      setCardToPlay(null);
-    } else {
-      setCardToPlay(card);
-    }
-  };
-
   return (
-    <Wrapper
-      isSelected={cardToPlay === card}
-      onClick={() => toggleCardToPlay()}
-    >
+    <Wrapper isSelected={isSelected} onClick={() => onCardClick(card)}>
       <Value>{value}</Value>
       <Suit>{suit}</Suit>
-      {/* {value} {suit.charAt(0)} */}
     </Wrapper>
   );
 }

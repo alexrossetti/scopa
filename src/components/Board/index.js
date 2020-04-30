@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+
 import { cardValues } from '../../constants/cards';
+import Card from '../Card';
 
 export default function Board({
   cardToPlay,
@@ -18,10 +20,12 @@ export default function Board({
   }, [cardsToTake]);
 
   const onClick = card => {
+    console.log('in function', card, cardToPlay);
     if (!cardToPlay) {
       return null;
     }
     if (cardsToTake.includes(card)) {
+      console.log('here');
       const newCardsToTake = cardsToTake.filter(c => c !== card);
       setCardsToTake(newCardsToTake);
     } else {
@@ -29,16 +33,15 @@ export default function Board({
     }
   };
 
-  // console.log('sum of selection', selectedSum);
-
   return (
     <Wrapper>
       {boardCards.map(card => {
         return (
           <Card
             key={card}
+            card={card}
             isSelected={cardsToTake.includes(card)}
-            onClick={() => onClick(card)}
+            onCardClick={onClick}
           >
             {card}
           </Card>
@@ -59,11 +62,11 @@ const Wrapper = styled.div`
   margin: auto;
   width: 200px;
 `;
-const Card = styled.div`
-  height: 100px;
-  width: 100px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${props => (props.isSelected ? '#faa' : 'inherit')};
-`;
+// const Card = styled.div`
+//   height: 100px;
+//   width: 100px;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   background: ${props => (props.isSelected ? '#faa' : 'inherit')};
+// `;

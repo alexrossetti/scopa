@@ -19,6 +19,8 @@ export default function App() {
   const [cardToPlay, setCardToPlay] = useState(null);
   const [cardsToTake, setCardsToTake] = useState([]);
 
+  console.log('cards to take', cardsToTake);
+
   useEffect(() => {
     setPlayers(1);
     if (players) {
