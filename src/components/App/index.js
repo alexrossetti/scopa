@@ -71,9 +71,9 @@ export default function App() {
       removeCardFromHand(hands[turn], cardToPlay);
       removeCardsFromBoard(cardsToTake);
       setWonCards(newWonCards);
-      // remove card to play from the users hand
     }
 
+    // if the user played a scopa, add a point to their score
     if (boardCards.length === 0 && deck.length > 0) {
       const newScores = score;
       newScores[turn] += 1;
@@ -95,35 +95,38 @@ export default function App() {
   const playIsDisabled =
     cardToPlay === null ||
     (sumOfCardValues([cardToPlay]) !== sumOfCardValues(cardsToTake) &&
-      userCanPlayMove(hands[turn], boardCards));
+      userCanPlayMove(hands[turn], boardCards)) ||
+    (!userCanPlayMove(hands[turn], boardCards) && cardsToTake.length !== 0);
 
   const dealIsDisabled = isDealDisabled(hands) && deck.length !== 0;
 
   return (
     <AppContainer>
       <GlobalStyles />
-      {players && (
+      {/* {players && (
         <div>
           {score.map((s, index) => {
             return <h2 key={index}>S - {s}</h2>;
           })}
         </div>
       )}
-      {players === null && <button onClick={() => setPlayers(1)}>2</button>}
-      {hands.map((hand, index) => {
-        return (
-          <Player
-            isTurn={turn === index}
-            key={index}
-            score={score[index]}
-            wonCards={wonCards[index]}
-            hand={hand}
-            playCard={playCard}
-            cardToPlay={cardToPlay}
-            setCardToPlay={setCardToPlay}
-          />
-        );
-      })}
+      {players === null && <button onClick={() => setPlayers(1)}>2</button>} */}
+      {Array(players)
+        .fill(0)
+        .map((player, index) => {
+          return (
+            <Player
+              isTurn={turn === index}
+              key={index}
+              score={score[index]}
+              wonCards={wonCards[index]}
+              hand={hands[index]}
+              playCard={playCard}
+              cardToPlay={cardToPlay}
+              setCardToPlay={setCardToPlay}
+            />
+          );
+        })}
       <Board
         cardToPlay={cardToPlay}
         boardCards={boardCards}

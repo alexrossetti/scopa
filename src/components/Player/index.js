@@ -12,25 +12,28 @@ export default function Player({
 }) {
   return (
     <Wrapper isTurn={isTurn}>
-      {hand.map(card => {
-        return (
-          <Card
-            key={card}
-            card={card}
-            cardToPlay={cardToPlay}
-            setCardToPlay={setCardToPlay}
-          />
-        );
-      })}
-      <h4>Won Cards - {wonCards.length}</h4>
+      {hand &&
+        hand.map((card, index) => {
+          return (
+            <Card
+              key={index}
+              card={card}
+              cardToPlay={cardToPlay}
+              setCardToPlay={setCardToPlay}
+            />
+          );
+        })}
+      {/* <h4>Won Cards - {wonCards.length}</h4> */}
       {/* <h3>Score - {score}</h3> */}
     </Wrapper>
   );
 }
 
 const Wrapper = styled.div`
+  height: 180px;
   display: flex;
   flex-direction: row;
+  align-items: center;
   margin-bottom: 50px;
   margin-top: 20px;
   width: 100%;
