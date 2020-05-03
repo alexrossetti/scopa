@@ -8,8 +8,28 @@ import { sumOfCardValues } from '../../utils/cardUtils';
 import Board from '../Board';
 import { userCanPlayMove, isDealDisabled } from '../../utils/gameUtils';
 
+const initialState = {
+  boardCards: [],
+  players: [
+    {
+      hand: [],
+      wonCards: [],
+      score: 0,
+    },
+  ],
+  turn: 0,
+  cardToPlay: null,
+  cardsToTake: [],
+};
+
+const initialPlayerObject = {
+  hand: [],
+  wonCards: [],
+  score: 0,
+};
+
 export default function App() {
-  const [players, setPlayers] = useState(null);
+  const [players, setPlayers] = useState([]);
   const [hands, setHands] = useState([]);
   const [wonCards, setWonCards] = useState([]);
   const [score, setScore] = useState([]);
@@ -18,19 +38,23 @@ export default function App() {
   const [turn, setTurn] = useState(0);
   const [cardToPlay, setCardToPlay] = useState(null);
   const [cardsToTake, setCardsToTake] = useState([]);
-
-  console.log('cards to take', cardsToTake);
+  const playerCount = 1;
 
   useEffect(() => {
-    setPlayers(1);
+    setPlayers(new Array(playerCount).fill(initialPlayerObject));
     if (players) {
-      setHands(new Array(players));
-      setScore(new Array(players).fill(0));
-      setWonCards(new Array(players).fill([]));
+      setHands(new Array(1));
+      setScore(new Array(1).fill(0));
+      setWonCards(new Array(1).fill([]));
     }
     setDeck(setupShuffledDeck());
-    dealToBoard();
-  }, [players]);
+  }, []);
+
+  useEffect(() => {
+    if (deck.length === 40) {
+      dealToBoard();
+    }
+  }, [deck]);
 
   const dealToBoard = () => {
     const items = deck.slice(0, 4);
@@ -39,15 +63,18 @@ export default function App() {
   };
 
   const dealToPlayers = () => {
-    const newHands = [];
-    for (let i = 0; i < players; i++) {
+    const newPlayers = players;
+
+    for (let i = 0; i < players.length; i++) {
       const items = deck.slice(0, 3);
-      newHands.push(items);
+      newPlayers[i] = { ...newPlayers[i], hand: items };
       setDeck(deck => deck.filter(c => !items.includes(c)));
     }
 
-    setHands(newHands);
+    setPlayers(newPlayers);
   };
+
+  console.log(players);
 
   const removeCardFromHand = (hand, card) => {
     const newHand = hand;
@@ -113,22 +140,24 @@ export default function App() {
         </div>
       )}
       {players === null && <button onClick={() => setPlayers(1)}>2</button>} */}
-      {Array(players)
-        .fill(0)
-        .map((player, index) => {
-          return (
-            <Player
-              isTurn={turn === index}
-              key={index}
-              score={score[index]}
-              wonCards={wonCards[index]}
-              hand={hands[index]}
-              playCard={playCard}
-              cardToPlay={cardToPlay}
-              setCardToPlay={setCardToPlay}
-            />
-          );
-        })}
+      {players.map((player, index) => {
+        const { hand, wonCards, score } = player;
+        return (
+          <Player
+            isTurn={turn === index}
+            key={index}
+            score={score}
+            // score={score[index]}
+            // wonCards={wonCards[index]}
+            wonCards={wonCards}
+            hand={hand}
+            // hand={hands[index]}
+            playCard={playCard}
+            cardToPlay={cardToPlay}
+            setCardToPlay={setCardToPlay}
+          />
+        );
+      })}
       <Board
         cardToPlay={cardToPlay}
         boardCards={boardCards}

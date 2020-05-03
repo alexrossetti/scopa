@@ -60,13 +60,5 @@ const Wrapper = styled.div`
   flex-wrap: wrap;
   background: green;
   margin: auto;
-  width: 200px;
+  width: 300px;
 `;
-// const Card = styled.div`
-//   height: 100px;
-//   width: 100px;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   background: ${props => (props.isSelected ? '#faa' : 'inherit')};
-// `;

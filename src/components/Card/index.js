@@ -27,9 +27,9 @@ const Wrapper = styled.div`
   justify-content: center;
   background: ${props => (props.isSelected ? '#ffa' : 'white')};
 
-  &:not(:last-child) {
+  /* &:not(:last-child) {
     margin-right: 10px;
-  }
+  } */
 `;
 
 const Value = styled.div``;
