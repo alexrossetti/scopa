@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 
 import { cardValues } from '../../constants/cards';
 import Card from '../Card';
+import {
+  Wrapper,
+  Container,
+  DeckContainer,
+  Deck,
+  BoardContainer,
+} from './styles';
 
 export default function Board({
   cardToPlay,
   boardCards,
   cardsToTake,
   setCardsToTake,
+  cardsRemaining = 0,
+  dealToPlayers,
+  dealIsDisabled,
 }) {
   const [selectedSum, setSelectedSum] = useState(0);
 
@@ -20,12 +29,10 @@ export default function Board({
   }, [cardsToTake]);
 
   const onClick = card => {
-    console.log('in function', card, cardToPlay);
     if (!cardToPlay) {
       return null;
     }
     if (cardsToTake.includes(card)) {
-      console.log('here');
       const newCardsToTake = cardsToTake.filter(c => c !== card);
       setCardsToTake(newCardsToTake);
     } else {
@@ -35,30 +42,30 @@ export default function Board({
 
   return (
     <Wrapper>
-      {boardCards.map(card => {
-        return (
-          <Card
-            key={card}
-            card={card}
-            isSelected={cardsToTake.includes(card)}
-            onCardClick={onClick}
-          >
-            {card}
-          </Card>
-        );
-      })}
+      <DeckContainer>
+        <Deck>{cardsRemaining} cards remaining</Deck>
+        {cardsRemaining !== 0 && (
+          <button onClick={() => dealToPlayers()} disabled={dealIsDisabled}>
+            DEAL
+          </button>
+        )}
+      </DeckContainer>
+      <Container>
+        <BoardContainer>
+          {boardCards.map(card => {
+            return (
+              <Card
+                key={card}
+                card={card}
+                isSelected={cardsToTake.includes(card)}
+                onCardClick={onClick}
+              >
+                {card}
+              </Card>
+            );
+          })}
+        </BoardContainer>
+      </Container>
     </Wrapper>
   );
 }
-
-const Wrapper = styled.div`
-  border: 2px solid #333;
-  padding: 20px;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  background: green;
-  margin: auto;
-  width: 300px;
-`;

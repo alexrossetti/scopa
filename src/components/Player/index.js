@@ -21,19 +21,23 @@ export default function Player({
 
   return (
     <Wrapper isTurn={isTurn}>
-      {hand &&
-        hand.map((card, index) => {
-          return (
-            <Card
-              key={index}
-              isSelected={card === cardToPlay}
-              card={card}
-              onCardClick={toggleCardToPlay}
-            />
-          );
-        })}
-      {/* <h4>Won Cards - {wonCards.length}</h4> */}
-      {/* <h3>Score - {score}</h3> */}
+      <InfoBar>
+        <div>Score: {score}</div>
+        <div>WonCards: {wonCards.length}</div>
+      </InfoBar>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        {hand &&
+          hand.map((card, index) => {
+            return (
+              <Card
+                key={index}
+                isSelected={card === cardToPlay}
+                card={card}
+                onCardClick={toggleCardToPlay}
+              />
+            );
+          })}
+      </div>
     </Wrapper>
   );
 }
@@ -41,11 +45,19 @@ export default function Player({
 const Wrapper = styled.div`
   height: 180px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   margin-bottom: 50px;
-  margin-top: 20px;
   width: 100%;
-  justify-content: center;
+  justify-content: space-between;
+  padding-bottom: 10px;
   background: ${props => (props.isTurn ? 'green' : 'inherit')};
+`;
+
+const InfoBar = styled.div`
+  width: 100%;
+  background: #000;
+  color: #fff;
+  display: flex;
+  justify-content: space-evenly;
 `;
