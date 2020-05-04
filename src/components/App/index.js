@@ -1,26 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 
+import Player from '../Player';
+import Board from '../Board';
 import { GlobalStyles } from '../../styles';
 import { setupShuffledDeck } from '../../utils/deckUtils';
-import Player from '../Player';
-import { sumOfCardValues } from '../../utils/cardUtils';
-import Board from '../Board';
-import { userCanPlayMove, isDealDisabled } from '../../utils/gameUtils';
+import { isDealDisabled, isPlayDisabled } from '../../utils/gameUtils';
+import { cards, suits } from '../../constants/cards';
 
-const initialState = {
-  boardCards: [],
-  players: [
-    {
-      hand: [],
-      wonCards: [],
-      score: 0,
-    },
-  ],
-  turn: 0,
-  cardToPlay: null,
-  cardsToTake: [],
-};
+// const initialState = {
+//   boardCards: [],
+//   players: [],
+//   turn: 0,
+//   cardToPlay: null,
+//   cardsToTake: [],
+//   lastMoveIndex: null
+// };
 
 const initialPlayerObject = {
   hand: [],
@@ -30,31 +25,29 @@ const initialPlayerObject = {
 
 export default function App() {
   const [players, setPlayers] = useState([]);
-  const [hands, setHands] = useState([]);
-  const [wonCards, setWonCards] = useState([]);
-  const [score, setScore] = useState([]);
   const [boardCards, setBoardCards] = useState([]);
   const [deck, setDeck] = useState([]);
   const [turn, setTurn] = useState(0);
   const [cardToPlay, setCardToPlay] = useState(null);
   const [cardsToTake, setCardsToTake] = useState([]);
   const playerCount = 1;
+  const [lastMoveIndex, setLastMoveIndex] = useState(null);
 
   useEffect(() => {
-    setPlayers(new Array(playerCount).fill(initialPlayerObject));
-    if (players) {
-      setHands(new Array(1));
-      setScore(new Array(1).fill(0));
-      setWonCards(new Array(1).fill([]));
-    }
-    setDeck(setupShuffledDeck());
+    setupGame();
   }, []);
 
   useEffect(() => {
-    if (deck.length === 40) {
+    const deckSize = cards.length * suits.length;
+    if (deck.length === deckSize) {
       dealToBoard();
     }
   }, [deck]);
+
+  const setupGame = () => {
+    setPlayers(new Array(playerCount).fill(initialPlayerObject));
+    setDeck(setupShuffledDeck());
+  };
 
   const dealToBoard = () => {
     const items = deck.slice(0, 4);
@@ -74,12 +67,17 @@ export default function App() {
     setPlayers(newPlayers);
   };
 
-  console.log(players);
+  const removeCardFromHand = card => {
+    const newPlayers = players;
 
-  const removeCardFromHand = (hand, card) => {
-    const newHand = hand;
+    const newHand = newPlayers[turn].hand;
     const cardIndex = newHand.findIndex(c => c === card);
     newHand[cardIndex] = null;
+
+    const newPlayer = { ...newPlayers[turn], hand: newHand };
+    newPlayers[turn] = newPlayer;
+
+    setPlayers(newPlayers);
   };
 
   const removeCardsFromBoard = cards => {
@@ -87,71 +85,92 @@ export default function App() {
     setBoardCards(newBoardCards);
   };
 
+  // TODO: at the end of the game, give all remaining cards to the last player to make a valid move
+  const endGame = () => {
+    // if (isLastTurn(deck, players)) {
+    //   console.log('in here', players[turn].hand);
+    //   newWonCards = [...newWonCards, ...boardCards];
+    //   setBoardCards([]);
+    // } else {
+    //   newWonCards = [...newWonCards, ...cardsToTake];
+    // }
+  };
+
+  const takeCards = card => {
+    const newPlayers = players;
+    const takeCards = [cardToPlay, ...cardsToTake];
+
+    // set the new hand for the player
+    const newHand = newPlayers[turn].hand;
+    const cardIndex = newHand.findIndex(c => c === card);
+    newHand[cardIndex] = null;
+
+    // set the new score for the player - if the user played a scopa, add a point to their score
+    let newScore = newPlayers[turn].score;
+
+    if (boardCards.length === 0 && deck.length > 0) {
+      newScore += 1;
+    }
+
+    // set the new wonCards for the player
+    let newWonCards = [
+      ...newPlayers[turn].wonCards,
+      cardToPlay,
+      ...cardsToTake,
+    ];
+
+    // update the new player object
+    const newPlayer = {
+      ...newPlayers[turn],
+      score: newScore,
+      hand: newHand,
+      wonCards: newWonCards,
+    };
+
+    newPlayers[turn] = newPlayer;
+    setPlayers(newPlayers);
+    setLastMoveIndex(turn);
+  };
+
   const playCard = () => {
     if (!cardsToTake.length) {
-      removeCardFromHand(hands[turn], cardToPlay);
+      // remove card from hand - add card to board
+      removeCardFromHand(cardToPlay);
       setBoardCards([...boardCards, cardToPlay]);
     } else {
-      // add selected card and the cards to take to the players 'won' deck
-      const toTake = [cardToPlay, ...cardsToTake];
-      const newWonCards = wonCards;
-      newWonCards[turn] = [...newWonCards[turn], ...toTake];
-
-      removeCardFromHand(hands[turn], cardToPlay);
+      // remove card from hand and add won cards to wonCards array for the player - remove selected cards from board
+      takeCards(cardToPlay);
       removeCardsFromBoard(cardsToTake);
-      setWonCards(newWonCards);
-    }
-
-    // if the user played a scopa, add a point to their score
-    if (boardCards.length === 0 && deck.length > 0) {
-      const newScores = score;
-      newScores[turn] += 1;
-      setScore(newScores);
-    }
-
-    if (deck.length === 0 && turn === players.length - 1) {
-      const newWonCards = boardCards;
-      newWonCards[turn] = [...newWonCards[turn], ...boardCards];
-      removeCardsFromBoard(boardCards);
-      setWonCards(newWonCards);
     }
 
     setCardToPlay(null);
     setCardsToTake([]);
-    setTurn((turn + 1) % players);
+    setTurn((turn + 1) % players.length);
   };
 
-  const playIsDisabled =
-    cardToPlay === null ||
-    (sumOfCardValues([cardToPlay]) !== sumOfCardValues(cardsToTake) &&
-      userCanPlayMove(hands[turn], boardCards)) ||
-    (!userCanPlayMove(hands[turn], boardCards) && cardsToTake.length !== 0);
+  const dealIsDisabled = isDealDisabled(players);
+  const playIsDisabled = isPlayDisabled(
+    cardToPlay,
+    cardsToTake,
+    players,
+    turn,
+    boardCards
+  );
 
-  const dealIsDisabled = isDealDisabled(hands) && deck.length !== 0;
+  console.log('PLAYERS: ', players);
 
   return (
     <AppContainer>
       <GlobalStyles />
-      {/* {players && (
-        <div>
-          {score.map((s, index) => {
-            return <h2 key={index}>S - {s}</h2>;
-          })}
-        </div>
-      )}
-      {players === null && <button onClick={() => setPlayers(1)}>2</button>} */}
       {players.map((player, index) => {
         const { hand, wonCards, score } = player;
         return (
           <Player
-            isTurn={turn === index}
             key={index}
+            isTurn={turn === index}
             score={score}
-            // score={score[index]}
-            // wonCards={wonCards[index]}
             wonCards={wonCards}
             hand={hand}
-            // hand={hands[index]}
             playCard={playCard}
             cardToPlay={cardToPlay}
             setCardToPlay={setCardToPlay}
@@ -163,12 +182,12 @@ export default function App() {
         boardCards={boardCards}
         cardsToTake={cardsToTake}
         setCardsToTake={setCardsToTake}
+        cardsRemaining={deck.length}
+        dealToPlayers={dealToPlayers}
+        dealIsDisabled={dealIsDisabled}
       />
       <button disabled={playIsDisabled} onClick={() => playCard()}>
         Play Card
-      </button>
-      <button onClick={() => dealToPlayers()} disabled={dealIsDisabled}>
-        DEAL
       </button>
     </AppContainer>
   );

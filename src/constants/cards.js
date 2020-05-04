@@ -1,5 +1,8 @@
-export const suits = ['Spade', 'Denari', 'Coppe', 'Bastoni'];
-export const cards = [1, 2, 3, 4, 5, 6, 7, 'Fante', 'Cavallo', 'Re'];
+// export const suits = ['Spade', 'Denari', 'Coppe', 'Bastoni'];
+// export const cards = [1, 2, 3, 4, 5, 6, 7, 'Fante', 'Cavallo', 'Re'];
+
+export const suits = ['Spade'];
+export const cards = [1, 2, 3, 4, 5, 6, 7];
 
 export const primieraScoring = {
   7: 21,
